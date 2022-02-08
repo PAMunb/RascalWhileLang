@@ -1,56 +1,65 @@
 module lang::\while::CFG
 
 import lang::\while::Syntax; 
+import analysis::graphs::Graph;
+
+alias CFG = Graph[Label];
 
 public Label init(Stmt s) {
-  switch(s) {
-    case Assignment(_, _, l): return l;
-    case Skip(l): return l;
-    case Seq(s1, _): return init(s1);
-    case IfThenElse(Condition(_, l), _, _): return l; 
-    case While(Condition(_, l), _): return l; 
-  };
-  return 0;
+  	switch(s) {
+    	case Assignment(_, _, l): return l;
+    	case Skip(l): return l;
+    	case Seq(s1, _): return init(s1);
+    	case IfThenElse(Condition(_, l), _, _): return l; 
+    	case While(Condition(_, l), _): return l; 
+  	};
+  	return 0;
 } 
 
+/*
+public Label init(Assignment(_, _, l)) = l;
+public Label init(Skip(l)) = l;
+public Label init(Seq(s1, _)) = init(s1);
+public Label init(IfThenElse(Condition(_, l), _, _)) = l;
+public Label init(While(Condition(_, l), _)) = l;
+*/
+
+public set[Label] final(Stmt s){
+	switch(s) {
+    	case Assignment(_, _, l): return { l };
+    	case Skip(l): return { l };
+    	case Seq(_, s2): return final(s2);
+    	case IfThenElse(_, s1, s2): return final(s1) + final(s2); 
+    	case While(Condition(_, l), _): return { l }; 
+  	};
+	return{};
+}
 
 public set[Block] blocks(Stmt s) {
-  switch(s) {
-    case Assignment(_, _, _): return { stmt(s) };
-    case Skip(_): return { stmt(s) };
-    case Seq(s1, s2): return blocks(s1) + blocks(s2);
-    case IfThenElse(c, s1 , s2): return { condition(c) } + blocks(s1) + blocks(s2); 
-    case While(c, s): return {condition(c)} + blocks(s); 
-  }
-  return {}; 
+  	switch(s) {
+    	case Assignment(_, _, _): return { stmt(s) };
+    	case Skip(_): return { stmt(s) };
+    	case Seq(s1, s2): return blocks(s1) + blocks(s2);
+    	case IfThenElse(c, s1 , s2): return { condition(c) } + blocks(s1) + blocks(s2); 
+    	case While(c, s): return { condition(c) } + blocks(s); 
+  	}
+  	return {}; 
 }
 
 public set[Label] labels(Stmt s) = { label(b) | Block b <- blocks(s) };
 
+//TODO review
+public CFG flow(Stmt s) {
+	switch(s) {
+    	case Assignment(_, _, _): return { };
+    	case Skip(_): return { };
+    	case Seq(s1, s2): return flow(s1) + flow(s2) + {<l,init(s2)> | Label l <- final(s1)};
+    	case IfThenElse(Condition(_, l), s1, s2): return flow(s1) + flow(s2) + <l,init(s1)> + <l, init(s2)>;
+    	case While(Condition(_, l), s1): return flow(s1) + {<l2,l> | Label l2 <- final(s1)};
+  	};
+	return {};
+}
 
-BExp b = Gt(Var("y"), Num(1));
-Condition c = Condition(b, 3);  
-
-Stmt s1 = Assignment("y", Var("x"), 1); 
-Stmt s2 = Assignment("z", Num(1), 2); 
-Stmt s4 = Assignment("z", Mult(Var("z"), Var("y")), 4);
-Stmt s5 = Assignment("y", Sub(Var("y"), Num(1)), 5);
-Stmt s6 = Assignment("y", Num(0), 6);
-
-Stmt s3 = While(c, Seq(s4, s5)); 
-
-Stmt stmt = Seq(s1, Seq(s2, Seq(s3, s6)));
-
-test bool initS1() = init(s1) == 1; 
-test bool initS2() = init(s2) == 2;
-test bool initS3() = init(s3) == 3; 
-test bool initS4() = init(s4) == 4; 
-test bool initS5() = init(s5) == 5; 
-test bool initS6() = init(s6) == 6;
-test bool initSTMT() = init(stmt) == 1; 
-
- 
-
-
-
-
+public CFG flow(WhileProgram p){
+	return flow(p.s);
+}

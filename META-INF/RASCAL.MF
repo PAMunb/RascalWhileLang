@@ -4,5 +4,5 @@ Courses: courses
 Project-Name: WhileLang
 Require-Libraries: 
 Main-Module: Plugin
-Source: src
+Source: src,test
 
