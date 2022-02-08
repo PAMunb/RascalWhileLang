@@ -41,7 +41,7 @@ public set[Block] blocks(Stmt s) {
     	case Skip(_): return { stmt(s) };
     	case Seq(s1, s2): return blocks(s1) + blocks(s2);
     	case IfThenElse(c, s1 , s2): return { condition(c) } + blocks(s1) + blocks(s2); 
-    	case While(c, s): return { condition(c) } + blocks(s); 
+    	case While(c, s1): return { condition(c) } + blocks(s1); 
   	}
   	return {}; 
 }
@@ -55,7 +55,7 @@ public CFG flow(Stmt s) {
     	case Skip(_): return { };
     	case Seq(s1, s2): return flow(s1) + flow(s2) + {<l,init(s2)> | Label l <- final(s1)};
     	case IfThenElse(Condition(_, l), s1, s2): return flow(s1) + flow(s2) + <l,init(s1)> + <l, init(s2)>;
-    	case While(Condition(_, l), s1): return flow(s1) + {<l2,l> | Label l2 <- final(s1)};
+    	case While(Condition(_, l), s1): return flow(s1) + <l,init(s1)> + {<l2,l> | Label l2 <- final(s1)};
   	};
 	return {};
 }
