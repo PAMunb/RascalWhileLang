@@ -27,13 +27,13 @@ test bool initS5() = init(s5) == 5;
 test bool initS6() = init(s6) == 6;
 test bool initSTMT() = init(stmt) == 1; 
 
-test bool finalS1() = 1 in final(s1); 
-test bool finalS2() = 2 in final(s2);
-test bool finalS3() = 3 in final(s3);
-test bool finalS4() = 4 in final(s4);
-test bool finalS5() = 5 in final(s5);
-test bool finalS6() = 6 in final(s6);
-test bool finalSTMT() = 6 in final(stmt);
+test bool finalS1() = final(s1) == {1}; 
+test bool finalS2() = final(s2) == {2};
+test bool finalS3() = final(s3) == {3};
+test bool finalS4() = final(s4) == {4};
+test bool finalS5() = final(s5) == {5};
+test bool finalS6() = final(s6) == {6};
+test bool finalSTMT() = final(stmt) == {6};
 
 //TODO test other methods
 
