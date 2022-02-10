@@ -1,10 +1,14 @@
 module lang::\while::CFG
 
 import lang::\while::Syntax; 
+
+import Relation;
 import analysis::graphs::Graph;
+
 
 alias CFG = Graph[Label];
 
+//returns the initial label of a statement
 public Label init(Stmt s) {
   	switch(s) {
     	case Assignment(_, _, l): return l;
@@ -24,6 +28,13 @@ public Label init(IfThenElse(Condition(_, l), _, _)) = l;
 public Label init(While(Condition(_, l), _)) = l;
 */
 
+@doc{
+.Synopsis
+Returns the set of final labels in a statement.
+
+.Description
+Whereas a sequence of statements has a single entry, it may ha ve multiple exits (as for example in the conditional).
+}
 public set[Label] final(Stmt s){
 	switch(s) {
     	case Assignment(_, _, l): return { l };
@@ -35,6 +46,7 @@ public set[Label] final(Stmt s){
 	return{};
 }
 
+//return the set of statements, or elementary blocks, of the form of: assignments, skip or conditions
 public set[Block] blocks(Stmt s) {
   	switch(s) {
     	case Assignment(_, _, _): return { stmt(s) };
@@ -62,4 +74,18 @@ public CFG flow(Stmt s) {
 
 public CFG flow(WhileProgram p){
 	return flow(p.s);
+}
+
+public CFG reverseFlow(Stmt s){
+	return {<to,from> | <from,to> <- flow(s)};
+	//return reverseFlow(flow(s));
+}
+
+public CFG reverseFlow(CFG cfg){
+	return {<to,from> | <from,to> <- cfg};
+	//return invert(cfg);
+}
+
+public CFG reverseFlow(WhileProgram p){
+	return reverseFlow(flow(p));
 }
