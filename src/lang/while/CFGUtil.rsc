@@ -15,6 +15,12 @@ public Figure toFigure(Graph[&T] g){
     return toFigure(g, nodes);
 }
 
+public Figure toFigureComplete(Graph[str] g){
+	nodes = [box(text(n), id(n), size(50), fillColor("lightgreen")) | n <- carrier(g)];
+    edges = [edge(c.from, c.to, toArrow(box(size(10)))) | c <- g];   
+    return scrollable(graph(nodes, edges, hint("layered"), std(size(20)), std(gap(20))));
+}
+
 private Figure toFigure(Graph[&T] g, Figures nodes){
     edges = [edge(toString(c.from), toString(c.to), toArrow(box(size(10)))) | c <- g];   
     return scrollable(graph(nodes, edges, hint("layered"), std(size(20)), std(gap(20))));

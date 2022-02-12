@@ -4,17 +4,16 @@ import lang::\while::CFG;
 import lang::\while::CFGUtil;
 
 import programs::Factorial;
-import programs::Fibonacci;
 import programs::Power;
 
 import vis::Render;
 import IO;
 import Relation;
+import util::Math;
 import analysis::graphs::Graph;
 
 public void main(){
-	//CFG cfg = flow(factorialProgram());
-	CFG cfg = flow(fibonacciProgram());
+	CFG cfg = flow(factorialProgram());
 	//CFG cfg = flow(powerProgram());
 	
 	
@@ -24,6 +23,11 @@ public void main(){
 	println("bottom=<bottom(cfg)>");
 	println("closure=<cfg+>");
 	println("connectedComponents=<connectedComponents(cfg)>");
+	
+	Graph[str] complete = {<toString(from),toString(to)> | <from,to> <- cfg};
+	complete = complete + {<"START",top> | top <- top(complete)};
+	complete = complete + {<bottom,"END"> | bottom <- bottom(complete)};
 		
-	render(toFigure(cfg));
+	//render(toFigure(cfg));
+	render(toFigureComplete(complete)); 
 }
