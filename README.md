@@ -18,11 +18,12 @@ Springer Publishing Company, Incorporated.
 
 
    * [x] abstract syntax of the While language (Chap. I)
-   * [ ] control-flow graph (Chapter II)
+   * [x] control-flow graph (Chapter II)
    * [ ] intraprocedural data-flow analysis (Chapter II)
      * [ ] MFP (Maximum Fixed Point framework)
      * [ ] MOP (Meet Over all Paths framework)
    * [ ] interprocedural data-flow analysis (Chapter II)
+   * [x] parser for the simple While language
    * [ ] parser for the extended While language (including procedures and procedure calls)
    * [ ] structural semantics
    
