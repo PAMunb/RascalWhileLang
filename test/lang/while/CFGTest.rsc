@@ -73,3 +73,30 @@ test bool reverseFlowWhileProgram() = reverseFlow(factorial) == {<2,1>,<3,2>,<4,
 
 //TODO test other methods
 
+// The following is a test case for a simple CFG. 
+// We have discussed this test case during a specific class. 
+// 
+// Our goal is to compute: 
+// 
+// flow(Seq(s1, Seq(s2, s5)) =  
+//   flow(s1) + flow(Seq(s2, s5)) + { (l, init(Seq(s2, s5))) | l in final(s1) }
+//   {} + flow(s2) + flow(s5) + {(l, init(s5)) | l in final(s2) } + { (l, init(Seq(s2, s5))) | l in final(s1) }
+//   {} + flow(s3) + flow(s4) + {(2, init(s3)), (2, init(s4)} + flow(s5) + {(l, init(s5)) | l in final(s2) } + { (l, init(Seq(s2, s5))) | l in final(s1) }
+//   {} + {} + {} + {(2, 3), (2, 4)} + {} + {(l, init(s5)) | l in {3, 4} } + { (l, init(Seq(s2, s5))) | l in final(s1) }
+//   {} + {} + {} + {(2, 3), (2, 4)} + {} + {(3, 5), (4,5) } + { (1, 2) }
+//  
+test bool testSimpleCFG() {
+  Stmt s1 = Assignment("x", Num(5), 1);
+  Stmt s3 = Assignment("x", Num(10), 3);
+  Stmt s4 = Skip(4);
+  Stmt s2 = IfThenElse(Condition(Eq(Var("x"), Num(0)), 2), s3, s4);
+  Stmt s5 = Assignment("y", Num(20), 5);
+  
+  Stmt seq = Seq(s1, Seq(s2, s5)); 
+ 
+  CFG expected = {<1,2>, <2,3>, <2,4>, <3,5>, <4,5>}; 
+  return flow(seq) == expected;
+} 
+
+
+
