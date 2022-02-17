@@ -5,6 +5,9 @@ import ParseTree;
 import lang::\while::Parser;
 import lang::\while::Syntax;
 
+import IO;
+import Node; 
+
 
 test bool parseTrue() {
    return implode(#BExp, parse(#BExpSpec, "true")) == True(); 
@@ -43,5 +46,7 @@ test bool parseSequence() {
   s2 = Assignment("y", Num(10), 2);
   s3 = Assignment("z", Num(15), 3);
    
+  s = implode(#Stmt, parse(#StmtSpec, "x := 5 [1]; y := 10 [2] ; z := 15 [3]"));  
+  println("<delAnnotationsRec(s)>"); 
   return implode(#Stmt, parse(#StmtSpec, "x := 5 [1]; y := 10 [2] ; z := 15 [3]")) == Seq(s1, Seq(s2, s3)); 
 }
