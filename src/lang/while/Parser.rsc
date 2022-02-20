@@ -9,12 +9,19 @@
 }
 module lang::\while::Parser
 
+import lang::\while::Syntax;
+
+import ParseTree;
+import Node;
+
+
 start syntax StmtSpec 
   = Assignment: Identifier x ":=" AExpSpec exp "[" Natural l "]" 
   | Skip: "skip" "[" Natural l "]" 
   | IfThenElse: "if" ConditionSpec c  "then" StmtSpec s1 "else" StmtSpec s2
   | While: "while" ConditionSpec c  StmtSpec s
-  > right Seq: StmtSpec ";" StmtSpec  
+  //| bracket Seq: "(" StmtSpec s1 ";" StmtSpec s2")"
+  > right Seq: StmtSpec s1 ";" StmtSpec s2
   ;
 
 syntax ConditionSpec = Condition: "(" BExpSpec b "," Natural l ")"; 
@@ -50,4 +57,10 @@ layout MyLayout = [\t\n\ \r\f]*;
 lexical Identifier = [a-z] !<< [a-z]+ !>> [a-z] \ MyKeywords;
 
 // this defines the reserved keywords used in the definition of Identifier
-keyword MyKeywords = "if" | "then" | "else" | "while";
+keyword MyKeywords = "if" | "then" | "else" | "while" | "skip";
+
+
+private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
+private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
+
+public WhileProgram parse(str txt) = WhileProgram(implode(parse(#StmtSpec, txt)));
