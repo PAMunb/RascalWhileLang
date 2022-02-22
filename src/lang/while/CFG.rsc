@@ -2,7 +2,6 @@ module lang::\while::CFG
 
 import lang::\while::Syntax; 
 
-import Relation;
 import analysis::graphs::Graph;
 
 
