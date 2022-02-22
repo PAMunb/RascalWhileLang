@@ -3,34 +3,32 @@ module lang::\while::dataflow::ReachingDefinition
 import lang::\while::Syntax; 
 import lang::\while::CFG; 
 
-alias Abstraction = set[tuple[str, Label]]; // rel[str, Label] 
+            
+alias Abstraction = set[tuple[str, Label]];  
 alias Mapping = map[Label, Abstraction]; 
 
-Mapping entry = ();
-Mapping exit = ();
 
 tuple[Mapping, Mapping] reachingDefinition(WhileProgram program) { 
-   bool fixed = false; 
-
+   Mapping entry = ();
+   Mapping exit = (); 
+  
    CFG cfg = flow(program.s); 
    
-   //init
    for(Label l <- labels(program.s)) {
      exit[l] = {}; 
    }
  
-   while(!fixed) {   // TODO: replace the while with a solve. 
-      Mapping entryOld = entry; 
-   	  Mapping exitOld = exit; 
-     
+   tuple[Mapping, Mapping] res = <entry, exit>; 
+   
+   solve(res) {  
       for(Block b <- blocks(program.s)) {
-       	Label l1 = label(b); 
-        entry[l1] = ({} | it + exit[l2] | Label l2 <- labels(program.s), <l2, l1> in cfg);
-       	exit[l1] = (entry[l1] - kill(b, entry[l1])) + gen(b); 
+       	Label target = label(b); 
+        entry[target] = ({} | it + exit[from] | <from, target> <- cfg);
+       	exit[target] = (entry[target] - kill(b, entry[target])) + gen(b); 
       } 
-      fixed = (entryOld == entry) && (exitOld == exit); 
+      res = <entry, exit>;
    }  
-   return <entry, exit>; 
+   return res; 
 } 
 
 
