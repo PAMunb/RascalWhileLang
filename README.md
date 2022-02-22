@@ -20,6 +20,10 @@ Springer Publishing Company, Incorporated.
    * [x] abstract syntax of the While language (Chap. I)
    * [x] control-flow graph (Chapter II)
    * [ ] intraprocedural data-flow analysis (Chapter II)
+     * [x] Reaching Definitions
+     * [ ] Available Expressions
+     * [ ] Very Busy Expressions
+     * [ ] Live Variable Analysis 
      * [ ] MFP (Maximum Fixed Point framework)
      * [ ] MOP (Meet Over all Paths framework)
    * [ ] interprocedural data-flow analysis (Chapter II)
