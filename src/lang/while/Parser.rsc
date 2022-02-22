@@ -18,9 +18,8 @@ import Node;
 start syntax StmtSpec 
   = Assignment: Identifier x ":=" AExpSpec exp "[" Natural l "]" 
   | Skip: "skip" "[" Natural l "]" 
-  | IfThenElse: "if" ConditionSpec c  "then" StmtSpec s1 "else" StmtSpec s2
-  | While: "while" ConditionSpec c  StmtSpec s
-  //| bracket Seq: "(" StmtSpec s1 ";" StmtSpec s2")"
+  | IfThenElse: "if" ConditionSpec c  "then" StmtSpec s1 "else" StmtSpec s2 "end"
+  | While: "while" ConditionSpec c  "do" StmtSpec s "end" 
   > right Seq: StmtSpec s1 ";" StmtSpec s2
   ;
 
@@ -45,6 +44,11 @@ syntax BExpSpec
    > left Or : BExpSpec b1 "||" BExpSpec b2  
    ; 
 
+
+// The following comes from the Rascal documentation. 
+// 
+// see: https://tutor.rascal-mpl.org/Rascal/Rascal.html#/Rascal/Declarations/SyntaxDefinition/SyntaxDefinition.html
+
 lexical Natural 
   = [0-9]+ ;     
   
@@ -57,7 +61,7 @@ layout MyLayout = [\t\n\ \r\f]*;
 lexical Identifier = [a-z] !<< [a-z]+ !>> [a-z] \ MyKeywords;
 
 // this defines the reserved keywords used in the definition of Identifier
-keyword MyKeywords = "if" | "then" | "else" | "while" | "skip";
+keyword MyKeywords = "if" | "then" | "else" | "while" | "skip" | "end";
 
 
 private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
