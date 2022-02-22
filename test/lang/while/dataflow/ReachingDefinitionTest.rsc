@@ -6,8 +6,6 @@ import lang::\while::Parser;
 
 import programs::Factorial;
 
-//import IO;
-
 
 test bool killTest() {
   Abstraction entry = {<"x", 1>, <"y", 2>, <"y", 3>}; 
@@ -36,22 +34,12 @@ test bool reachingDefinitionFactorialWhileTest() {
   
   return rdFactorialTest(p);
 }
-
-/* TODO review parser: StmtSpec, Seq, with (s1; s2)
+ 
 test bool reachingDefinitionFactorialWhileStringTest() {
   WhileProgram p = parse(factorialProgramStr());  // take a look at programs::Factorial. 
   
-  tuple[Mapping first, Mapping second] res = reachingDefinition(p); 
-  
-  println("IN: <res.first>");
-  println("OUT: <res.second>");
-  
-  println(p);
-  
-  
   return rdFactorialTest(p);
 }
-*/
 
 private bool rdFactorialTest(WhileProgram p) {
   tuple[Mapping first, Mapping second] res = reachingDefinition(p); 
