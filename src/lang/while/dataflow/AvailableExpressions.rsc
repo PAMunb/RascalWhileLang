@@ -45,10 +45,12 @@ public CFG teste(CFG cfg){
 	return cfg;
 }
 
-
 public set[str] kill(Block b) {
   tuple [str, str, str] tAexp = <"","","">;
  
+  if(isEmpty(fva))
+    return {};
+  
   switch(b) {
     case stmt(Assignment(x, a, _)):{
     	switch(a) {
@@ -59,24 +61,18 @@ public set[str] kill(Block b) {
     		case Mult(AExp a1, AExp b1): tAexp = mountAexp(a1, b1, "*"); 
     	} 
 
-    	if(isEmpty(fva)){
-    		return {};
-    	}else{
-				lrel[str, str, str] fvaLocal = fva;
-				fva = fva - [fvat | fvat <-  {<aexpI, v, v2> | <aexpI, v, v2> <- fva, v == x}];
-				fva = fva - [fvat | fvat <-  {<aexpI, v, v2> | <aexpI, v, v2> <- fva, v2 == x}];
-			if(fvaLocal != fva){
-				fvaLocal = [tAexp] + (fvaLocal - fva);
-				
-				return {s | <s, _, _> <- fvaLocal};
-			}
-    		return {};
-    	}
+    	lrel[str, str, str] fvaLocal = fva;
+		fva = fva - [fvat | fvat <-  {<aexpI, v, v2> | <aexpI, v, v2> <- fva, (v == x) || (v2 == x)}];
+		if(fvaLocal != fva){
+		  fvaLocal = [tAexp] + (fvaLocal - fva);
+		  return {s | <s, _, _> <- fvaLocal};
+		}
+    	return {};
+    	
     }
     default: return {};
   }
 } 
-
 
 public set[str] gen(Block b) {
   tuple [str, str, str] tAexp = <"","","">;
