@@ -3,78 +3,34 @@ module lang::\while::dataflow::Support
 import lang::\while::Syntax; 
 import lang::\while::CFG;
 
-data BlockAbstraction = blockAbstraction(Block b)|Empty();
-data Exp = exp(BExp b)|exp(AExp a);
-                      
-public set[Exp] nonTrivialExpression(Exp e) {
-	switch(e) {
-		case exp(Var(str _)): return {}; //trivial
-		case exp(Num(int _)): return {}; //trivial
-		case exp(Add(AExp a1, AExp a2)): return {e} + nonTrivialExpression(exp(a1))+nonTrivialExpression(exp(a2));
-		case exp(Sub(AExp a1, AExp a2)): return {e} + nonTrivialExpression(exp(a1))+nonTrivialExpression(exp(a2));
-		case exp(Mult(AExp a1, AExp a2)): return {e} + nonTrivialExpression(exp(a1))+nonTrivialExpression(exp(a2));
-		case exp(Eq(AExp a1, AExp a2)): return nonTrivialExpression(exp(a1))+nonTrivialExpression(exp(a2));
-		case exp(Gt(AExp a1, AExp a2) ): return nonTrivialExpression(exp(a1))+nonTrivialExpression(exp(a2));
-		
-		//PPA page 39: "(..) For clarity, we will  concentrate on arithmetic expressions (..)"
-		case exp(Not(BExp b)): return nonTrivialExpression(exp(b));
-		case exp(And(BExp b1, BExp b2)): return nonTrivialExpression(exp(b1))+nonTrivialExpression(exp(b2));
-		case exp(Or(BExp b1, BExp b2)): return nonTrivialExpression(exp(b1))+nonTrivialExpression(exp(b2));
-	}
-	return {};
-}
+import List; 
 
-public bool expHasVariable(str x, Exp e){
-	switch(e){
-		case exp(Var(str v)): return v == x;
-		case exp(Num(int _)): return false;
-		case exp(Add(AExp a1, AExp a2)): return expHasVariable(x, exp(a1))||expHasVariable(x, exp(a2));
-		case exp(Sub(AExp a1, AExp a2)): return expHasVariable(x, exp(a1))||expHasVariable(x, exp(a2));
-		case exp(Mult(AExp a1, AExp a2)): return expHasVariable(x, exp(a1))||expHasVariable(x, exp(a2));
-		case exp(Not(BExp b)): return  expHasVariable(x, exp(b));
-		case exp(And(BExp b1, BExp b2)): return expHasVariable(x, exp(b1))||expHasVariable(x, exp(b2));
-		case exp(Or(BExp b1, BExp b2)): return expHasVariable(x, exp(b1))||expHasVariable(x, exp(b2));
-		case exp(Eq(AExp a1, AExp a2)): return expHasVariable(x, exp(a1))||expHasVariable(x, exp(a2));
-		case exp(Gt(AExp a1, AExp a2) ): return expHasVariable(x, exp(a1))||expHasVariable(x, exp(a2));
-	}
-	return false;
-}
+import util::Maybe;
 
-public BlockAbstraction getBlock(Label l, WhileProgram program) {
-	for(Block b <- blocks(program.s)) {
-		switch(b){
-			case stmt(Assignment(str _, AExp _, Label label)): {
-				if(label == l) {
-					return blockAbstraction(b);
-				}
-			}
-			case stmt(Skip(label)): {
-				if(label == l) {
-					return blockAbstraction(b);
-				}
-			}
-			case condition(Condition(_, label)): {
-				if(label == l) {
-					return blockAbstraction(b);
-				}
-			}
-		}
-	}
-	return Empty();
-}
+public set[AExp] nonTrivialExpression(WhileProgram program) = ({} | it + nonTrivialExpression(exp) | /AExp exp <- program);
 
-public set[Label] finalLabels(Stmt stmt){
-	switch(stmt){
-		case Assignment(str _, AExp _, Label l): return {l};
-		case Skip(Label l): return {l};
-		case Seq(Stmt _, Stmt s2): return finalLabels(s2);
-		case IfThenElse(Condition _, Stmt s1, Stmt s2): return finalLabels(s1) + finalLabels(s2);
-		case While(Condition(_, l), Stmt _): return {l};
-	}
-	return {};
-}
+public set[AExp] nonTrivialExpression(BExp e)= ({} | it + nonTrivialExpression(exp) | /AExp exp <- e);
 
-public set[Label] finalLabels(WhileProgram program){
-	return finalLabels(program.s);
-}
+public set[AExp] nonTrivialExpression(AExp e) {
+   set[AExp] res = {}; 
+   top-down visit(e) {
+   	 case a: Add(_, _) : res = a + res; 
+   	 case s: Sub(_, _) : res = s + res; 
+   	 case m: Mult(_, _): res = m + res; 
+   }
+   return res;  
+} 
+
+
+public bool expHasVariable(str x, AExp e) = size([ x | /Var(x) <- e]) > 0;
+
+public Maybe[Block] getBlock(Label l, WhileProgram program) {
+	top-down visit(program) {
+	  case a: Assignment(str _, AExp _, Label label): if(label == l) return just(stmt(a)); 
+	  case s: Skip(label): if(label == l) return just(stmt(s)); 
+	  case c: Condition(_, label): if(label == l) return just(condition(c)); 
+	}
+	return nothing();
+} 
+
 
