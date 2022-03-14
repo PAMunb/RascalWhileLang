@@ -1,58 +1,75 @@
 module lang::\while::dataflow::AvailableExpressionsTest
 
 import lang::\while::dataflow::AvailableExpressions; 
+import lang::\while::dataflow::Support; 
 import lang::\while::Syntax; 
 import lang::\while::Parser;
+import ParseTree;
 
 import programs::Prog;
+import programs::Factorial;
 
+// import IO;
 
-test bool killAndGenTest() {
-
-	k1 = kill(stmt(Assignment("x", Add(Var("a"), Var("b")), 1))) == {};
-	g1 = gen(stmt(Assignment("x", Add(Var("a"), Var("b")), 1))) == {"a+b"};
-	
-	k2 = kill(stmt(Assignment("y", Mult(Var("a"), Var("b")), 2))) == {};
-	g2 = gen(stmt(Assignment("y", Mult(Var("a"), Var("b")), 2))) == {"a*b"};
-	
-	k3 = kill(condition(Condition(Gt(Var("y"), Add(Var("a"), Var("b"))), 3))) == {};
-	g3 = gen(condition(Condition(Gt(Var("y"), Add(Var("a"), Var("b"))), 3))) == {"a+b"};
-	
-	k4 = kill(stmt(Assignment("a", Add(Var("a"), Num(1)), 4))) == {"a+b", "a*b", "a+1"};
-	g4 = gen(stmt(Assignment("a", Add(Var("a"), Num(1)), 4))) == {};
-	
-	k5 = kill(stmt(Assignment("x", Add(Var("a"), Var("b")), 5))) == {};
-	g5 = gen(stmt(Assignment("x", Add(Var("a"), Var("b")), 5))) == {"a+b"};
-
-	return k1 && k2 && k3 && k4 && k5 && g1 && g2 && g3 && g4 && g5; 
+public Exp parseExp(str x) {
+	return exp(implode(#AExp, parse(#AExpSpec, x)));
 }
 
+test bool testKill() {
+	Block assignZ = stmt(Assignment("z",Num(0),4));
+	WhileProgram facProg = factorialProgram();
+	
+	set[Exp] generated = killAE(assignZ, facProg);
+	set[Exp] expected = {exp(Mult(Var("z"),Var("y")))};
+	
+	// println(generated);
+	
+	return generated == expected;
+}
 
-test bool AvailableExpressionsTestProgTest() {
+test bool testGenCond(){
+	Block cond = condition(Condition(Gt(Var("y"), Add(Var("a"), Var("b"))), 3));
+	set[Exp] generated = genAE(cond);
+	set[Exp] expected = {exp(Add(Var("a"),Var("b")))};
+	// println(generated);
+	return generated == expected;
+}
+
+test bool testGenInc(){
+	Block increment = stmt(Assignment("a", Add(Var("a"), Num(1)), 4));
+	set[Exp] generated = genAE(increment);
+	set[Exp] expected = {};
+	// println(generated);
+	return generated == expected;
+}
+
+test bool testGenAssign() = genAE(stmt(Assignment("y", Mult(Var("a"), Var("b")), 2))) == { exp(Mult(Var("a"), Var("b"))) };
+
+test bool testAvailableExpressionProgram() {
   WhileProgram p = progProgram();  // take a look at programs::Prog. 
   
   return aeProgTest(p);
 }
 
 private bool aeProgTest(WhileProgram p) {
-  tuple[map[Label, set[str]] first, map[Label, set[str]] second] res = availableExpressions(p);
+  tuple[Mapping genEntry, Mapping genExit] res = availableExpressions(p);
   
-  map[Label, set[str]] expectedEntry = 
+  Mapping expectedEntry = 
    ( 1 : {}
-   , 2 : {"a+b"}
-   , 3 : {"a+b"}
-   , 4 : {"a+b"}
+   , 2 : {parseExp("a+b")}
+   , 3 : {parseExp("a+b")}
+   , 4 : {parseExp("a+b")}
    , 5 : {} );
   
-  map[Label, set[str]] expectedExit = 
-   ( 1 : {"a+b"}
-   , 2 : {"a+b", "a*b"}
-   , 3 : {"a+b"}
+  Mapping expectedExit = 
+   ( 1 : {parseExp("a+b")}
+   , 2 : {parseExp("a+b"), parseExp("a*b")}
+   , 3 : {parseExp("a+b")}
    , 4 : {}
-   , 5 : {"a+b"} );
+   , 5 : {parseExp("a+b")} );
   
 //  return res.first == expectedEntry ;//&& 
 //  return res.second == expectedExit; 
   
-  return res.first == expectedEntry && res.second == expectedExit; 
+  return res.genEntry == expectedEntry && res.genExit == expectedExit; 
 }
