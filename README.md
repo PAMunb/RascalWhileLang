@@ -25,9 +25,10 @@ Springer Publishing Company, Incorporated.
      * [x] Very Busy Expressions
      * [x] Live Variable Analysis 
      * [ ] MFP (Maximum Fixed Point framework)
-     * [ ] MOP (Meet Over all Paths framework)
+     * [ ] MOP (Meet Over all Paths framework)  
    * [ ] interprocedural data-flow analysis (Chapter II)
    * [x] parser for the simple While language
    * [ ] parser for the extended While language (including procedures and procedure calls)
-   * [ ] structural semantics
+   * [ ] intraprocedural structural semantics
+   * [ ] interprocedural structural semantics
    
