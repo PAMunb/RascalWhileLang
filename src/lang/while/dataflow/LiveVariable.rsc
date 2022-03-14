@@ -22,10 +22,9 @@ tuple[Mapping, Mapping] liveVariables(WhileProgram program) {
    
    solve(res){
       for(Block b <- blocks(program.s)) {
-      	Label target = label(b);
-      	//calclv(target);
-       	exit[target] = ({} | it + entry[from] | <from, target> <- cfg);       	
-        entry[target] = (exit[target] - kill(b)) + gen(b); 
+        Label l1 = label(b);
+        exit[l1] = ({} | it + entry[l2] | <l2, l1> <- cfg);
+        entry[l1] = (exit[l1] - kill(b)) + gen(b);
       } 
       res = <entry, exit>;
    }

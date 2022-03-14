@@ -46,5 +46,5 @@ test bool testNonTrivialBooleanExpressions(){
 }
 
 
-test bool testFinalLabels() = finalLabels(factorialProgram()) == {6};
+test bool testFinalLabels() = final(factorialProgram().s) == {6};
 test bool getBlockByLabel() = getBlock(6, factorialProgram()) == just(stmt(Assignment("y",Num(0),6)));
