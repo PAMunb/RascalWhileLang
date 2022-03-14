@@ -45,6 +45,8 @@ public set[Label] final(Stmt s){
 	return{};
 }
 
+public set[Block] blocks(WhileProgram p) = blocks(p.s);
+
 //return the set of statements, or elementary blocks, of the form of: assignments, skip or conditions
 public set[Block] blocks(Stmt s) {
   	switch(s) {
@@ -59,7 +61,6 @@ public set[Block] blocks(Stmt s) {
 
 public set[Label] labels(Stmt s) = { label(b) | Block b <- blocks(s) };
 
-//TODO review
 public CFG flow(Stmt s) {
 	switch(s) {
     	case Assignment(_, _, _): return { };
@@ -77,12 +78,10 @@ public CFG flow(WhileProgram p){
 
 public CFG reverseFlow(Stmt s){
 	return {<to,from> | <from,to> <- flow(s)};
-	//return reverseFlow(flow(s));
 }
 
 public CFG reverseFlow(CFG cfg){
 	return {<to,from> | <from,to> <- cfg};
-	//return invert(cfg);
 }
 
 public CFG reverseFlow(WhileProgram p){
