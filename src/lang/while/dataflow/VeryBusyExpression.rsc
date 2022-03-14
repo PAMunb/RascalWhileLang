@@ -27,11 +27,13 @@ alias Mapping = map[Label, set[AExp]];
 public tuple[Mapping, Mapping] veryBusyExpression(WhileProgram program) {
 	Mapping entry = ();
 	Mapping exit = ();
-	
+
 	for( Label l <- labels(program.s) ) {
 		entry[l] = {};
 		exit[l] = {};
 	}
+	
+	CFG cfg = reverseFlow(program);
 	
 	tuple[Mapping, Mapping] res = <entry, exit>;
 	
@@ -43,7 +45,7 @@ public tuple[Mapping, Mapping] veryBusyExpression(WhileProgram program) {
 			  exit[l1] = {};
 			}
 			else {
-			  exit[l1] = (nonTrivialExpression(program) | it & entry[l2] | <l2, l1> <- reverseFlow(program));
+			  exit[l1] = (nonTrivialExpression(program) | it & entry[l2] | <l2, l1> <- cfg);
 			}	
 			
 			entry[l1] = (exit[l1] - kill(block, program)) + gen(block);

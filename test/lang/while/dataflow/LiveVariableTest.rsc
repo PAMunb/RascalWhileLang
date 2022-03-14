@@ -9,20 +9,6 @@ import programs::Factorial;
 str example = "x:=2 [1]; y:=4 [2]; x:=1 [3]; if (y\>x, 4) then z:=y [5] else z:=y*y[6] end; x:=z[7]";
 
 
-test bool liveVariableWhileStringTest() {
-  WhileProgram p = parse(example);  // take a look at programs::Factorial. 
-  
-  return lvTest(p);
-}
-
-bool lvTest(WhileProgram p) {
-  tuple[Mapping first, Mapping second] res = liveVariables(p); 
-  println("<res.first>");
-  println("<res.second>");
-  return true; 
-}
-
-
 test bool killTest() {
   b1 = kill(stmt(Skip(4))) == {}; 
   b2 = kill(stmt(Assignment("y", Num(4), 5))) == {"y"};

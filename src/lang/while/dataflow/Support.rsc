@@ -21,7 +21,6 @@ public set[AExp] nonTrivialExpression(AExp e) {
    return res;  
 } 
 
-
 public bool expHasVariable(str x, AExp e) = size([ x | /Var(x) <- e]) > 0;
 
 public Maybe[Block] getBlock(Label l, WhileProgram program) {
@@ -32,5 +31,3 @@ public Maybe[Block] getBlock(Label l, WhileProgram program) {
 	}
 	return nothing();
 } 
-
-
