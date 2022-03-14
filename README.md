@@ -21,9 +21,9 @@ Springer Publishing Company, Incorporated.
    * [x] control-flow graph (Chapter II)
    * [ ] intraprocedural data-flow analysis (Chapter II)
      * [x] Reaching Definitions
-     * [ ] Available Expressions
-     * [ ] Very Busy Expressions
-     * [ ] Live Variable Analysis 
+     * [x] Available Expressions
+     * [x] Very Busy Expressions
+     * [x] Live Variable Analysis 
      * [ ] MFP (Maximum Fixed Point framework)
      * [ ] MOP (Meet Over all Paths framework)
    * [ ] interprocedural data-flow analysis (Chapter II)
