@@ -78,3 +78,23 @@ public set[Label] finalLabels(WhileProgram program){
 	return finalLabels(program.s);
 }
 
+public set[Exp] kill(Block b, WhileProgram program) {
+	switch(b) {
+  		case stmt(Assignment(str x, AExp _, _)): return ( {} | it + exp | exp <- allNonTrivialExpressions(program), expHasVariable(x, exp) );
+  		case stmt(Skip(Label _)): return {};
+  		case condition(Condition(BExp _, Label _)): {};
+	}
+  	return {};
+}
+
+public set[Exp] gen(Block b) {
+  	switch(b) {
+  		case stmt(Assignment(_, AExp a, _)): return nonTrivialExpression(exp(a));
+  		case condition(Condition(BExp b, Label _)): return nonTrivialExpression(exp(b));
+  		case stmt(Skip(Label _)): return {};
+  	}
+  	return {};
+}
+
+public set[Exp] allNonTrivialExpressions(WhileProgram program) = ({} | it + gen(b) | Block b <- blocks(program.s));
+

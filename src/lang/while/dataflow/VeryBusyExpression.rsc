@@ -4,24 +4,6 @@ import lang::\while::Syntax;
 import lang::\while::CFG;
 import lang::\while::dataflow::Support;
 
-public set[Exp] kill(Block b, WhileProgram program) {
-	switch(b) {
-  		case stmt(Assignment(str x, AExp _, _)): return ( {} | it + exp | exp <- nonTrivialExpression(program), expHasVariable(x, exp) );
-  		case stmt(Skip(Label _)): return {};
-  		case condition(Condition(BExp _, Label _)): {};
-	}
-  	return {};
-}
-
-public set[Exp] gen(Block b) {
-  	switch(b) {
-  		case stmt(Assignment(_, AExp a, _)): return nonTrivialExpression(exp(a));
-  		case condition(Condition(BExp b, Label _)): return nonTrivialExpression(exp(b));
-  		case stmt(Skip(Label _)): return {};
-  	}
-  	return {};
-}
-
 public set[Exp] genByLabel(Label l, WhileProgram program){
 	set[Exp] res = {};
 	BlockAbstraction bAbstraction = getBlock(l, program);
@@ -41,14 +23,12 @@ public set[Exp] killByLabel(Label l, WhileProgram program){
 }
 
 alias Mapping = map[Label, set[Exp]];
-public set[Exp] nonTrivialExpression(WhileProgram program) = ({} | it + gen(b) | Block b <- blocks(program.s));
-
 
 public tuple[Mapping, Mapping] veryBusyExpression(WhileProgram program) {
 	Mapping entry = ();
 	Mapping exit = ();
 	set[Label] programFinalLabels = finalLabels(program);
-	set[Exp] allNonTrivial = nonTrivialExpression(program);
+	set[Exp] allNonTrivial = allNonTrivialExpressions(program);
 	for( Label l <- labels(program.s) ) {
 		entry[l] = {};
 		exit[l] = {};
