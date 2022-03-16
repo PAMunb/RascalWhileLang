@@ -7,6 +7,21 @@ import programs::\Factorial;
 alias Abstraction = set[str];
 alias Mapping = map[Label, Abstraction]; 
 
+public Abstraction kill(Block b){
+  switch(b) {
+    case stmt(Assignment(x, _, _)): return {x};
+    default: return {};
+  }
+}
+
+public Abstraction gen(Block b){
+  switch(b) {
+    case stmt(Assignment(_, a, _)): return FV(a);
+    case condition(Condition b) : return FV(b);
+    default: return {};
+  }
+}
+
 tuple[Mapping, Mapping] liveVariables(WhileProgram program) { 
 	
    Mapping entry = ();
@@ -31,20 +46,6 @@ tuple[Mapping, Mapping] liveVariables(WhileProgram program) {
    return res; 
 } 
 
-public Abstraction kill(Block b){
-  switch(b) {
-    case stmt(Assignment(x, _, _)): return {x};
-    default: return {};
-  }
-}
-
-public Abstraction gen(Block b){
-  switch(b) {
-    case stmt(Assignment(_, a, _)): return FV(a);
-    case condition(Condition b) : return FV(b);
-    default: return {};
-  }
-}
 
 public Abstraction FV(AExp a){
 	return {x | /Var(x) <- a};
