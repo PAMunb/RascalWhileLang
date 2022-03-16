@@ -2,12 +2,15 @@ module lang::\while::Semantics
 
 import lang::\while::Syntax;
 
-alias State = map[str, int]; 
+alias State = map[str, int];
 
+ 
 data Configuration = Terminal(State state)
                    | NonTerminal(Stmt stmt, State state)
                    | ConfigError()      // this should not be necessary.
                    ; 
+
+State initialState() = (); 
 
 @doc{
  Synopsis: An interpreter for arithmetic expressions. 
@@ -42,6 +45,8 @@ bool bEval(And(l,r), State s) = bEval(l, s) && bEval(r, s);
 bool bEval(Or(l,r), State s)  = bEval(l, s) || bEval(r, s);
 bool bEval(Eq(l,r), State s)  = aEval(l, s) == aEval(r, s);
 bool bEval(Gt(l,r), State s)  = aEval(l, s) > aEval(r, s);
+
+Configuration run(WhileProgram p) = run(p.s, initialState()); 
 
 // Interpreter for the assignment statement. 
 Configuration run(Assignment(x, e, _), State s) = Terminal(s + (x : aEval(e, s))); 
