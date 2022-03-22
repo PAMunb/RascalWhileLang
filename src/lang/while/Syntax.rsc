@@ -35,6 +35,7 @@ data BExp = True()
           | Or(BExp b1, BExp b2)
           | Eq(AExp a1, AExp a2)
           | Gt(AExp a1, AExp a2) 
+          | Lt(AExp a1, AExp a2) 
           ; 
 
 data AExp = Var(str x)

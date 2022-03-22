@@ -5,6 +5,8 @@ import ParseTree;
 import lang::\while::Parser;
 import lang::\while::interprocedural::InterproceduralSyntax;
 
+import programs::Fibonacci;
+
 import IO;
 import Node; 
 
@@ -51,6 +53,12 @@ test bool parseSequence() {
   return implode(#Stmt, parse(#StmtSpec, "x := 5 [1]; y := 10 [2] ; z := 15 [3]")) == Seq(s1, Seq(s2, s3)); 
 }
 
+test bool parseIf(){
+  i = IfThenElse(Condition(True(), 1), Skip(2), Skip(3));
+  s = delAnnotationsRec(implode(#Stmt, parse(#StmtSpec, "if (true, 1) then skip [2] else skip [3] end")));  
+  return i == s;
+}
+
 test bool parseReturn() {
   s = Return(Var("x"), 1); 
   return implode(#Stmt, parse(#StmtSpec, "return x [1]")) == s; 
@@ -82,18 +90,16 @@ test bool parseProcedureNoArgs() {
   return s1 == expected;
 }
 
-test bool parseProcedureSeq() {
-  p1 = Procedure("p",[ByValue("a"), ByReference("z")], 1, Skip(3), 2); 
-  p2 = Procedure("k",[ByReference("y")], 4, Skip(6), 5);  
-  Procedure expected = ProcedureSeq(p1,p2);
-  s1 = delAnnotationsRec(implode(#Procedure, parse(#Declaration, "proc p(val a, res z) is[1] skip [3] end[2] ; proc k(res y) is[4] skip[6] end[5]")));
-  return s1 == expected;
-}
-
 test bool parseProgram(){
   d = Procedure("p",[], 1, Skip(3), 2);
   s = Skip(4); 
-  expected = WhileProgramProcedural(d,s);
+  expected = WhileProgramProcedural([d],s);
   program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, "begin proc p() is[1] skip [3] end[2] skip [4] end.")));
   return program == expected;
 }
+
+test bool parseFibonacci(){  
+  program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, fibonacciProgramStr())));
+  return fibonacciProgram() == program;
+}
+

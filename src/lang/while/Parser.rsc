@@ -15,11 +15,10 @@ import ParseTree;
 import Node;
 
 start syntax Program 
-   = WhileProgramProcedural: "begin" Declaration d StmtSpec s "end." ;
+   = WhileProgramProcedural: "begin" { Declaration ";"}* d StmtSpec s "end." ;
  
 syntax Declaration 
-  = Procedure: "proc" Identifier name "("  { FormalArgumentSpec ","}* args ")" "is[" Natural ln "]"  StmtSpec stmt "end[" Natural lx "]"
-  > right ProcedureSeq: Declaration p1 ";" Declaration p2;
+  = Procedure: "proc" Identifier name "("  { FormalArgumentSpec ","}* args ")" "is[" Natural ln "]"  StmtSpec stmt "end[" Natural lx "]";
 
 syntax FormalArgumentSpec 
   =  ByValue: "val" Identifier name
@@ -52,6 +51,7 @@ syntax BExpSpec
    | Not: "!" BExpSpec
    | left Eq : AExpSpec "==" AExpSpec
    > left Gt : AExpSpec "\>"  AExpSpec
+   > left Lt : AExpSpec "\<"  AExpSpec
    > left And: BExpSpec b1 "&&" BExpSpec b2
    > left Or : BExpSpec b1 "||" BExpSpec b2  
    ; 
@@ -80,4 +80,5 @@ private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
 private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
 
 public WhileProgram parse(str txt) = WhileProgram(implode(parse(#StmtSpec, txt)));
-//public WhileProgramProcedural parse(str txt) = WhileProgramProcedural(implode(parse(#Program, txt)));
+public WhileProgram parse(str txt) = delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt)));
+
