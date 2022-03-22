@@ -29,6 +29,6 @@ Springer Publishing Company, Incorporated.
    * [ ] interprocedural data-flow analysis (Chapter II)
    * [x] parser for the simple While language
    * [ ] parser for the extended While language (including procedures and procedure calls)
-   * [ ] intraprocedural structural semantics
+   * [x] intraprocedural structural semantics
    * [ ] interprocedural structural semantics
    
