@@ -7,8 +7,7 @@ data WhileProgram = WhileProgramProcedural(list[Procedure] d, Stmt s);
 data FormalArgument = ByValue(str name)
                     | ByReference(str name);
 
-data Procedure = Procedure(str name, list[FormalArgument] args, Label ln, Stmt stmt, Label lx)
-               | ProcedureSeq(Procedure p1, Procedure p2);
+data Procedure = Procedure(str name, list[FormalArgument] args, Label ln, Stmt stmt, Label lx);
 
 data Stmt = Call(str name, list[AExp] args, Label lc, Label lr)
           | Return(AExp exp, Label l);

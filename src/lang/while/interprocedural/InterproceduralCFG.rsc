@@ -22,14 +22,6 @@ public Label init(Stmt s) {
   	return 0;
 } 
 
-/*
-public Label init(Assignment(_, _, l)) = l;
-public Label init(Skip(l)) = l;
-public Label init(Seq(s1, _)) = init(s1);
-public Label init(IfThenElse(Condition(_, l), _, _)) = l;
-public Label init(While(Condition(_, l), _)) = l;
-*/
-
 @doc{
 .Synopsis
 Returns the set of final labels in a statement.
@@ -51,6 +43,7 @@ public set[Label] final(Stmt s){
 }
 
 public set[Block] blocks(WhileProgram p) = blocks(p.s);
+public set[Block] blocks(WhileProgramProcedural(d, s)) = blocks(d) + blocks(s);
 
 //return the set of statements, or elementary blocks, of the form of: assignments, skip or conditions
 public set[Block] blocks(Stmt s) {
@@ -61,8 +54,17 @@ public set[Block] blocks(Stmt s) {
     	case IfThenElse(c, s1 , s2): return { condition(c) } + blocks(s1) + blocks(s2); 
     	case While(c, s1): return { condition(c) } + blocks(s1); 
     	case c: Call(_, _, _, _): return { stmt(c) };
+    	//TODO return
   	}
   	return {}; 
+}
+
+public set[Block] blocks(list[Procedure] procedures) {
+  	set[Block] b = {};
+  	for(p <- procedures){
+  		b = b + blocks(p.stmt);
+  	}
+  	return b;
 }
 
 public set[Label] labels(Stmt s) = { label(b) | Block b <- blocks(s) };
@@ -76,9 +78,20 @@ public CFG flow(Stmt s) {
     	case IfThenElse(Condition(_, l), s1, s2): return flow(s1) + flow(s2) + <l,init(s1)> + <l, init(s2)>;
     	case While(Condition(_, l), s1): return flow(s1) + <l,init(s1)> + {<l2,l> | Label l2 <- final(s1)};
     	//case Call(name, _, lc, lr): {};
+    	//TODO return
   	};
 	return {};
 }
+
+/*
+private Procedure findProcedureBySignature(str name, list[FormalArgument] args, WhileProgramProcedural(d, s)){
+	for(p <- d){
+  		if(p.name == name && p.args == args){
+  			return p;
+  		}
+  	}
+  	return null;
+}*/
 
 public CFG flow(WhileProgram p){
 	return flow(p.s);
