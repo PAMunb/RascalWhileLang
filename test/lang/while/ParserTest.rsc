@@ -76,6 +76,12 @@ test bool parseProcedure() {
   return s1 == expected;
 }
 
+test bool parseProcedureNoArgs() {
+  expected = Procedure("p",[], 1, Skip(3), 2); 
+  s1 = delAnnotationsRec(implode(#Procedure, parse(#Declaration, "proc p() is[1] skip [3] end[2]")));
+  return s1 == expected;
+}
+
 test bool parseProcedureSeq() {
   p1 = Procedure("p",[ByValue("a"), ByReference("z")], 1, Skip(3), 2); 
   p2 = Procedure("k",[ByReference("y")], 4, Skip(6), 5);  
@@ -84,3 +90,10 @@ test bool parseProcedureSeq() {
   return s1 == expected;
 }
 
+test bool parseProgram(){
+  d = Procedure("p",[], 1, Skip(3), 2);
+  s = Skip(4); 
+  expected = WhileProgramProcedural(d,s);
+  program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, "begin proc p() is[1] skip [3] end[2] skip [4] end.")));
+  return program == expected;
+}

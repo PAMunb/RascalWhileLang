@@ -15,7 +15,7 @@ import ParseTree;
 import Node;
 
 start syntax Program 
-   = WhileProgramProcedural: "begin" Declaration d StmtSpec s "end" ;
+   = WhileProgramProcedural: "begin" Declaration d StmtSpec s "end." ;
  
 syntax Declaration 
   = Procedure: "proc" Identifier name "("  { FormalArgumentSpec ","}* args ")" "is[" Natural ln "]"  StmtSpec stmt "end[" Natural lx "]"
