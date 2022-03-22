@@ -9,14 +9,26 @@
 }
 module lang::\while::Parser
 
-import lang::\while::Syntax;
+import lang::\while::interprocedural::InterproceduralSyntax;
 
 import ParseTree;
 import Node;
 
+start syntax Program 
+   = WhileProgramProcedural: "begin" Declaration d StmtSpec s "end" ;
+ 
+syntax Declaration 
+  = Procedure: "proc" Identifier name "("  { FormalArgumentSpec ","}* args ")" "is[" Natural ln "]"  StmtSpec stmt "end[" Natural lx "]"
+  > right ProcedureSeq: Declaration p1 ";" Declaration p2;
 
-start syntax StmtSpec 
-  = Assignment: Identifier x ":=" AExpSpec exp "[" Natural l "]" 
+syntax FormalArgumentSpec 
+  =  ByValue: "val" Identifier name
+  |  ByReference: "res" Identifier name;
+
+syntax StmtSpec 
+  = Assignment: Identifier x ":=" AExpSpec exp "[" Natural l "]"
+  | Call: "call" Identifier name "("  { AExpSpec ","}* args ")" "[" Natural lc "," Natural lr "]"
+  | Return: "return" AExpSpec exp "[" Natural l "]" 
   | Skip: "skip" "[" Natural l "]" 
   | IfThenElse: "if" ConditionSpec c  "then" StmtSpec s1 "else" StmtSpec s2 "end"
   | While: "while" ConditionSpec c  "do" StmtSpec s "end" 
@@ -61,10 +73,11 @@ layout MyLayout = [\t\n\ \r\f]*;
 lexical Identifier = [a-z] !<< [a-z]+ !>> [a-z] \ MyKeywords;
 
 // this defines the reserved keywords used in the definition of Identifier
-keyword MyKeywords = "if" | "then" | "else" | "while" | "skip" | "end";
+keyword MyKeywords = "if" | "then" | "else" | "while" | "skip" | "end" | "return" | "call" | "proc" | "is";
 
 
 private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
 private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
 
 public WhileProgram parse(str txt) = WhileProgram(implode(parse(#StmtSpec, txt)));
+//public WhileProgramProcedural parse(str txt) = WhileProgramProcedural(implode(parse(#Program, txt)));
