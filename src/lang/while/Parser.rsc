@@ -81,5 +81,5 @@ private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
 private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
 
 public WhileProgram parse(str txt) = WhileProgram(implode(parse(#StmtSpec, txt)));
-public WhileProgram parseProgram(str txt) = processModifiers(delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt))));
+public WhileProgram parseProgram(str txt) = processProcedureLabels(delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt))));
 

@@ -111,5 +111,10 @@ test bool testFlowCall(){
 	program = parseProgram(fibonacciProgramStr());
 	println("p=<program>");
 	println("==<flow(program.s)>");
+	top-down visit(program) {
+    	case c: Call(_, _, _, _):{
+    		println("c: <c> === <flow(c)>");
+    	}
+   	};    
 	return true;
 }

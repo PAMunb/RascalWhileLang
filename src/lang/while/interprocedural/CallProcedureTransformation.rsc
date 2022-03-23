@@ -4,7 +4,7 @@ import lang::\while::interprocedural::InterproceduralSyntax;
 
 import List;
 
-public WhileProgram processModifiers(p:WhileProgramProcedural(_, _)) { 
+public WhileProgram processProcedureLabels(p:WhileProgramProcedural(_, _)) { 
 	return visit(p) {
     	case c: Call(_, _, _, _) => addAnnotation(c,p) 
    	};    
@@ -13,8 +13,8 @@ public WhileProgram processModifiers(p:WhileProgramProcedural(_, _)) {
 private Stmt addAnnotation(c: Call(str name, _, _, _), p:WhileProgramProcedural(_, _)){
 	list[Procedure] procs = findProcedure(name, p);
 	if(!isEmpty(procs)){
-		Procedure proc = head(procs);
-		c @ proc = ProcedureLabels(proc.ln, proc.lx); 
+		Procedure procedure = head(procs);
+		c @ proc = ProcedureLabels(procedure.ln, procedure.lx); 
 	}	
 	return c; 
 }
