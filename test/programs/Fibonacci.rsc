@@ -2,7 +2,7 @@ module programs::Fibonacci
 
 import lang::\while::interprocedural::InterproceduralSyntax;
 
-Procedure fib = Procedure("fib",[ByValue("z"),ByReference("v")],1,
+Procedure fib = Procedure("fib",[ByValue("z"),ByValue("u"),ByReference("v")],1,
 	IfThenElse(Condition(Lt(Var("z"),Num(3)),2),
 		Assignment("v",Add(Var("u"),Num(1)),3),
 	Seq(Call("fib",[Sub(Var("z"),Num(1)),Var("u"),Var("v")],4,5),
@@ -18,7 +18,7 @@ public WhileProgram fibonacciProgram(){
 
 public str fibonacciProgramStr(){
 	return "begin 
-	       'proc fib(val z, res v) is[1]
+	       'proc fib(val z, val u, res v) is[1]
 	       '  if (z \< 3, 2) 
 	       '    then 
 	       '      v := u + 1 [3] 

@@ -11,6 +11,4 @@ data Procedure = Procedure(str name, list[FormalArgument] args, Label ln, Stmt s
 
 data Stmt = Call(str name, list[AExp] args, Label lc, Label lr)
           | Return(AExp exp, Label l);
-
-//data Block = condition(Condition c) | stmt(Stmt s); 
-//data Block = block(Call(_, _, _, _));                
+                      

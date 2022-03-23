@@ -100,6 +100,7 @@ test bool parseProgram(){
 
 test bool parseFibonacci(){  
   program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, fibonacciProgramStr())));
+  println("p=<program>");
   return fibonacciProgram() == program;
 }
 

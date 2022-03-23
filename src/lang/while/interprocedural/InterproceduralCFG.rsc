@@ -21,6 +21,8 @@ public Label init(Stmt s) {
   	};
   	return 0;
 } 
+public Label init(Procedure(_, _, ln, _, _)) = ln;
+public Label init(WhileProgram p) = init(p.s);
 
 @doc{
 .Synopsis
@@ -41,9 +43,10 @@ public set[Label] final(Stmt s){
   	};
 	return{};
 }
+public set[Label] final(Procedure(_, _, _, _, lx)) = { lx };
+public set[Label] final(WhileProgram p) = final(p.s);
 
-public set[Block] blocks(WhileProgram p) = blocks(p.s);
-public set[Block] blocks(WhileProgramProcedural(d, s)) = blocks(d) + blocks(s);
+
 
 //return the set of statements, or elementary blocks, of the form of: assignments, skip or conditions
 public set[Block] blocks(Stmt s) {
@@ -58,8 +61,12 @@ public set[Block] blocks(Stmt s) {
   	}
   	return {}; 
 }
+//TODO public set[Block] blocks(Procedure(_, _, ln, _, lx)) = { lx };
+public set[Block] blocks(WhileProgram p) = blocks(p.s);
+public set[Block] blocks(WhileProgramProcedural(d, s)) = blocks(d) + blocks(s);
 
 public set[Block] blocks(list[Procedure] procedures) {
+//TODO refatorar
   	set[Block] b = {};
   	for(p <- procedures){
   		b = b + blocks(p.stmt);
@@ -69,6 +76,7 @@ public set[Block] blocks(list[Procedure] procedures) {
 
 public set[Label] labels(Stmt s) = { label(b) | Block b <- blocks(s) };
 public set[Label] labels(Call(_, _, lc, lr)) = { lc, lr };
+public set[Label] labels(Procedure(_, _, ln, s, lx)) = { ln, lx } + labels(s);
 
 public CFG flow(Stmt s) {
 	switch(s) {
@@ -77,13 +85,22 @@ public CFG flow(Stmt s) {
     	case Seq(s1, s2): return flow(s1) + flow(s2) + {<l,init(s2)> | Label l <- final(s1)};
     	case IfThenElse(Condition(_, l), s1, s2): return flow(s1) + flow(s2) + <l,init(s1)> + <l, init(s2)>;
     	case While(Condition(_, l), s1): return flow(s1) + <l,init(s1)> + {<l2,l> | Label l2 <- final(s1)};
-    	//case Call(name, _, lc, lr): {};
+    	//TODO case Call(name, _, lc, lr): {};
     	//TODO return
   	};
 	return {};
 }
+public CFG flow(Procedure(_, _, ln, s, lx)) = <ln,init(s)> + flow(s) + { <l,lx> | Label l <- final(s)};
 
-/*
+public CFG flow(WhileProgram p) = flow(p.s);
+//TODO public CFG flow(WhileProgramProcedural(d, s)) = flow(s);
+
+public CFG reverseFlow(Stmt s) = {<to,from> | <from,to> <- flow(s)};
+public CFG reverseFlow(CFG cfg) = {<to,from> | <from,to> <- cfg};
+public CFG reverseFlow(WhileProgram p) = reverseFlow(flow(p));
+
+
+/* TODO
 private Procedure findProcedureBySignature(str name, list[FormalArgument] args, WhileProgramProcedural(d, s)){
 	for(p <- d){
   		if(p.name == name && p.args == args){
@@ -92,19 +109,3 @@ private Procedure findProcedureBySignature(str name, list[FormalArgument] args, 
   	}
   	return null;
 }*/
-
-public CFG flow(WhileProgram p){
-	return flow(p.s);
-}
-
-public CFG reverseFlow(Stmt s){
-	return {<to,from> | <from,to> <- flow(s)};
-}
-
-public CFG reverseFlow(CFG cfg){
-	return {<to,from> | <from,to> <- cfg};
-}
-
-public CFG reverseFlow(WhileProgram p){
-	return reverseFlow(flow(p));
-}
