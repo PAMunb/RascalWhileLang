@@ -85,6 +85,7 @@ public CFG flow(Stmt s) {
     	case Seq(s1, s2): return flow(s1) + flow(s2) + {<l,init(s2)> | Label l <- final(s1)};
     	case IfThenElse(Condition(_, l), s1, s2): return flow(s1) + flow(s2) + <l,init(s1)> + <l, init(s2)>;
     	case While(Condition(_, l), s1): return flow(s1) + <l,init(s1)> + {<l2,l> | Label l2 <- final(s1)};
+    	case c:Call(_, _, lc, lr): return { <lc,c@proc.ln>, <c@proc.lx,lr> };
     	//TODO case Call(name, _, lc, lr): {};
     	//TODO return
   	};

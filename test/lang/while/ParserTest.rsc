@@ -4,6 +4,7 @@ import ParseTree;
 
 import lang::\while::Parser;
 import lang::\while::interprocedural::InterproceduralSyntax;
+import lang::\while::interprocedural::InterproceduralCFG;
 
 import programs::Fibonacci;
 
@@ -99,8 +100,16 @@ test bool parseProgram(){
 }
 
 test bool parseFibonacci(){  
-  program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, fibonacciProgramStr())));
-  println("p=<program>");
+  //program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, fibonacciProgramStr())));
+  program = parseProgram(fibonacciProgramStr());
+  //println("p=<program>");
   return fibonacciProgram() == program;
 }
 
+//TODO deprecated ... mover para o lugar certo ... ficou aqui para testar as anotacao em "Call"
+test bool testFlowCall(){
+	program = parseProgram(fibonacciProgramStr());
+	println("p=<program>");
+	println("==<flow(program.s)>");
+	return true;
+}

@@ -11,4 +11,9 @@ data Procedure = Procedure(str name, list[FormalArgument] args, Label ln, Stmt s
 
 data Stmt = Call(str name, list[AExp] args, Label lc, Label lr)
           | Return(AExp exp, Label l);
+          
+          
+data ProcedureLabels = ProcedureLabels(Label ln, Label lx);
+
+anno ProcedureLabels Stmt @ proc;          
                       

@@ -10,6 +10,7 @@
 module lang::\while::Parser
 
 import lang::\while::interprocedural::InterproceduralSyntax;
+import lang::\while::interprocedural::CallProcedureTransformation;
 
 import ParseTree;
 import Node;
@@ -80,5 +81,5 @@ private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
 private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
 
 public WhileProgram parse(str txt) = WhileProgram(implode(parse(#StmtSpec, txt)));
-public WhileProgram parse(str txt) = delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt)));
+public WhileProgram parseProgram(str txt) = processModifiers(delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt))));
 
