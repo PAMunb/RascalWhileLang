@@ -94,7 +94,7 @@ test bool parseProcedureNoArgs() {
 test bool parseProgram(){
   d = Procedure("p",[], 1, Skip(3), 2);
   s = Skip(4); 
-  expected = WhileProgramProcedural([d],s);
+  expected = WhileProgramProcedural({d},s);
   program = delAnnotationsRec(implode(#WhileProgram, parse(#Program, "begin proc p() is[1] skip [3] end[2] skip [4] end.")));
   return program == expected;
 }
@@ -107,14 +107,14 @@ test bool parseFibonacci(){
 }
 
 //TODO deprecated ... mover para o lugar certo ... ficou aqui para testar as anotacao em "Call"
-test bool testFlowCall(){
-	program = parseProgram(fibonacciProgramStr());
-	println("p=<program>");
-	println("==<flow(program.s)>");
-	top-down visit(program) {
-    	case c: Call(_, _, _, _):{
-    		println("c: <c> === <flow(c)>");
-    	}
-   	};    
-	return true;
-}
+//test bool testFlowCall(){
+//	program = parseProgram(fibonacciProgramStr());
+//	//println("p=<program>");
+//	//println("==<flow(program.s)>");
+//	top-down visit(program) {
+//    	case c: Call(_, _, _, _):{
+//    		println("c: <c> === <flow(c)>");
+//    	}
+//   	};
+//	return true;
+//}

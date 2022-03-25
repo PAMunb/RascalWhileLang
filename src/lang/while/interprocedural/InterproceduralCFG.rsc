@@ -65,7 +65,7 @@ public set[Block] blocks(Stmt s) {
 public set[Block] blocks(WhileProgram p) = blocks(p.s);
 public set[Block] blocks(WhileProgramProcedural(d, s)) = blocks(d) + blocks(s);
 
-public set[Block] blocks(list[Procedure] procedures) {
+public set[Block] blocks(set[Procedure] procedures) {
 //TODO refatorar
   	set[Block] b = {};
   	for(p <- procedures){

@@ -2,7 +2,7 @@ module lang::\while::interprocedural::InterproceduralSyntax
 
 extend lang::\while::Syntax;
 
-data WhileProgram = WhileProgramProcedural(list[Procedure] d, Stmt s); 
+data WhileProgram = WhileProgramProcedural(set[Procedure] d, Stmt s); 
 
 data FormalArgument = ByValue(str name)
                     | ByReference(str name);

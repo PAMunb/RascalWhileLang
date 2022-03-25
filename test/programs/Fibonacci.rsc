@@ -10,7 +10,7 @@ Procedure fib = Procedure("fib",[ByValue("z"),ByValue("u"),ByReference("v")],1,
 
 Stmt c = Call("fib",[Var("x"),Num(0),Var("y")],9,10);
 
-WhileProgram fibonacci = WhileProgramProcedural([fib],c);
+WhileProgram fibonacci = WhileProgramProcedural({fib},c);
 
 public WhileProgram fibonacciProgram(){
 	return fibonacci;
