@@ -2,14 +2,14 @@ module lang::\while::interprocedural::InterproceduralCFG
 
 import lang::\while::interprocedural::InterproceduralSyntax;
 
-import analysis::graphs::Graph;
+//import analysis::graphs::Graph;
 
-//extend lang::\while::CFG;
+extend lang::\while::CFG;
 
-alias CFG = Graph[Label];
+//alias CFG = Graph[Label];
 
 //returns the initial label of a statement
-public Label init(Stmt s) {
+/*public Label init(Stmt s) {
   	switch(s) {
     	case Assignment(_, _, l): return l;
     	case Skip(l): return l;
@@ -21,6 +21,9 @@ public Label init(Stmt s) {
   	};
   	return 0;
 } 
+*/
+public Label init(Call(_, _, lc, _)) = lc;
+public Label init(Return(_, l)) = l;
 public Label init(Procedure(_, _, ln, _, _)) = ln;
 public Label init(WhileProgram p) = init(p.s);
 
@@ -31,7 +34,7 @@ Returns the set of final labels in a statement.
 .Description
 Whereas a sequence of statements has a single entry, it may ha ve multiple exits (as for example in the conditional).
 }
-public set[Label] final(Stmt s){
+/*public set[Label] final(Stmt s){
 	switch(s) {
     	case Assignment(_, _, l): return { l };
     	case Skip(l): return { l };
@@ -43,13 +46,16 @@ public set[Label] final(Stmt s){
   	};
 	return{};
 }
+*/
+public set[Label] final(Call(_, _, _, lr)) = { lr };
+public set[Label] final(Return(_, l)) = { l };
 public set[Label] final(Procedure(_, _, _, _, lx)) = { lx };
 public set[Label] final(WhileProgram p) = final(p.s);
 
 
 
 //return the set of statements, or elementary blocks, of the form of: assignments, skip or conditions
-public set[Block] blocks(Stmt s) {
+/*public set[Block] blocks(Stmt s) {
   	switch(s) {
     	case Assignment(_, _, _): return { stmt(s) };
     	case Skip(_): return { stmt(s) };
@@ -61,8 +67,10 @@ public set[Block] blocks(Stmt s) {
   	}
   	return {}; 
 }
+*/
+public set[Block] blocks(c: Call(_, _, _, _)) = { stmt(c) };
 //TODO public set[Block] blocks(Procedure(_, _, ln, _, lx)) = { lx };
-public set[Block] blocks(WhileProgram p) = blocks(p.s);
+//public set[Block] blocks(WhileProgram p) = blocks(p.s);
 public set[Block] blocks(WhileProgramProcedural(d, s)) = blocks(d) + blocks(s);
 
 public set[Block] blocks(set[Procedure] procedures) {
@@ -94,7 +102,15 @@ public CFG flow(Stmt s) {
 public CFG flow(Procedure(_, _, ln, s, lx)) = <ln,init(s)> + flow(s) + { <l,lx> | Label l <- final(s)};
 
 public CFG flow(WhileProgram p) = flow(p.s);
-//TODO public CFG flow(WhileProgramProcedural(d, s)) = flow(s);
+//TODO
+public CFG flow(set[Procedure] d) {
+	CFG cfg = {};
+	for(p <- d){
+		cfg = cfg + flow(p);
+	}
+	return cfg;
+} 
+public CFG flow(WhileProgramProcedural(d, s)) = flow(d) + flow(s);
 
 public CFG reverseFlow(Stmt s) = {<to,from> | <from,to> <- flow(s)};
 public CFG reverseFlow(CFG cfg) = {<to,from> | <from,to> <- cfg};

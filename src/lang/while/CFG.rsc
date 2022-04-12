@@ -8,7 +8,7 @@ import analysis::graphs::Graph;
 alias CFG = Graph[Label];
 
 //returns the initial label of a statement
-public Label init(Stmt s) {
+/*public Label init(Stmt s) {
   	switch(s) {
     	case Assignment(_, _, l): return l;
     	case Skip(l): return l;
@@ -18,14 +18,13 @@ public Label init(Stmt s) {
   	};
   	return 0;
 } 
-
-/*
+*/
 public Label init(Assignment(_, _, l)) = l;
 public Label init(Skip(l)) = l;
 public Label init(Seq(s1, _)) = init(s1);
 public Label init(IfThenElse(Condition(_, l), _, _)) = l;
 public Label init(While(Condition(_, l), _)) = l;
-*/
+
 
 @doc{
 .Synopsis
@@ -34,6 +33,7 @@ Returns the set of final labels in a statement.
 .Description
 Whereas a sequence of statements has a single entry, it may ha ve multiple exits (as for example in the conditional).
 }
+/*
 public set[Label] final(Stmt s){
 	switch(s) {
     	case Assignment(_, _, l): return { l };
@@ -44,11 +44,15 @@ public set[Label] final(Stmt s){
   	};
 	return{};
 }
-
-public set[Block] blocks(WhileProgram p) = blocks(p.s);
+*/
+public set[Label] final(Assignment(_, _, l)) = { l };
+public set[Label] final(Skip(l)) = { l };
+public set[Label] final(Seq(_, s2)) = final(s2);
+public set[Label] final(IfThenElse(_, s1, s2)) = final(s1) + final(s2);
+public set[Label] final(While(Condition(_, l), _)) = { l };
 
 //return the set of statements, or elementary blocks, of the form of: assignments, skip or conditions
-public set[Block] blocks(Stmt s) {
+/*public set[Block] blocks(Stmt s) {
   	switch(s) {
     	case Assignment(_, _, _): return { stmt(s) };
     	case Skip(_): return { stmt(s) };
@@ -57,7 +61,13 @@ public set[Block] blocks(Stmt s) {
     	case While(c, s1): return { condition(c) } + blocks(s1); 
   	}
   	return {}; 
-}
+}*/
+public set[Block] blocks(s: Assignment(_, _, _)) = { stmt(s) };
+public set[Block] blocks(s: Skip(_)) = { stmt(s) };
+public set[Block] blocks(Seq(s1, s2)) = blocks(s1) + blocks(s2);
+public set[Block] blocks(IfThenElse(c, s1 , s2)) = { condition(c) } + blocks(s1) + blocks(s2);
+public set[Block] blocks(While(c, s1)) = { condition(c) } + blocks(s1);
+public set[Block] blocks(WhileProgram p) = blocks(p.s);
 
 public set[Label] labels(Stmt s) = { label(b) | Block b <- blocks(s) };
 

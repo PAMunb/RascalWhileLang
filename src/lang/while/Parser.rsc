@@ -9,12 +9,13 @@
 }
 module lang::\while::Parser
 
-import lang::\while::interprocedural::InterproceduralSyntax;
-import lang::\while::interprocedural::CallProcedureTransformation;
+import lang::\while::Syntax;
+//import lang::\while::interprocedural::CallProcedureTransformation;
 
 import ParseTree;
 import Node;
 
+/*
 start syntax Program 
    = WhileProgramProcedural: "begin" { Declaration ";"}* d StmtSpec s "end." ;
  
@@ -24,11 +25,12 @@ syntax Declaration
 syntax FormalArgumentSpec 
   =  ByValue: "val" Identifier name
   |  ByReference: "res" Identifier name;
+*/
 
 syntax StmtSpec 
   = Assignment: Identifier x ":=" AExpSpec exp "[" Natural l "]"
-  | Call: "call" Identifier name "("  { AExpSpec ","}* args ")" "[" Natural lc "," Natural lr "]"
-  | Return: "return" AExpSpec exp "[" Natural l "]" 
+//  | Call: "call" Identifier name "("  { AExpSpec ","}* args ")" "[" Natural lc "," Natural lr "]"
+//  | Return: "return" AExpSpec exp "[" Natural l "]" 
   | Skip: "skip" "[" Natural l "]" 
   | IfThenElse: "if" ConditionSpec c  "then" StmtSpec s1 "else" StmtSpec s2 "end"
   | While: "while" ConditionSpec c  "do" StmtSpec s "end" 
@@ -81,5 +83,5 @@ private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
 private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
 
 public WhileProgram parse(str txt) = WhileProgram(implode(parse(#StmtSpec, txt)));
-public WhileProgram parseProgram(str txt) = processProcedureLabels(delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt))));
+//public WhileProgram parseProgram(str txt) = processProcedureLabels(delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt))));
 
