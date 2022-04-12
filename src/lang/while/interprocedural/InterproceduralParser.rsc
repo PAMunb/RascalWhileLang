@@ -27,5 +27,3 @@ private StmtSpec parse(str txt) = parse(#StmtSpec, txt);
 private Stmt implode(StmtSpec s) = delAnnotationsRec(implode(#Stmt, s));
 
 public WhileProgram parseProgram(str txt) = processProcedureLabels(delAnnotationsRec(implode(#WhileProgram, parse(#Program, txt))));
-
-  

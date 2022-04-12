@@ -8,7 +8,6 @@ import lang::\while::interprocedural::InterproceduralCFG;
 
 import programs::Fibonacci;
 
-import IO;
 import Node; 
 
 test bool parseReturn() {
@@ -51,22 +50,6 @@ test bool parseProgram(){
 }
 
 test bool parseFibonacci(){  
-  //program = processProcedureLabelsdelAnnotationsRec(implode(#WhileProgram, parse(#Program, fibonacciProgramStr())));
   program = parseProgram(fibonacciProgramStr());  
-  //println("p=<program>");
   return fibonacciProgram() == program;
 }
-
-
-//TODO deprecated ... mover para o lugar certo ... ficou aqui para testar as anotacao em "Call"
-//test bool testFlowCall(){
-//	program = parseProgram(fibonacciProgramStr());
-//	//println("p=<program>");
-//	//println("==<flow(program.s)>");
-//	top-down visit(program) {
-//    	case c: Call(_, _, _, _):{
-//    		println("c: <c> === <flow(c)>");
-//    	}
-//   	};
-//	return true;
-//}
