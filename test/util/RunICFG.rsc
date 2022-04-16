@@ -19,7 +19,7 @@ public void main(){
 }
 
 public void cfgFactorial(){
-	WhileProgram p = processProcedureLabels(fibonacciProgram());
+	WhileProgram p = fibonacciProgram();
 	CFG cfg = flow(p);
 	
 	println("cfg=<cfg>");

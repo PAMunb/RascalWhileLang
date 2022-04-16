@@ -3,7 +3,6 @@ module lang::\while::SuperCFGUtil
 import vis::Render;
 import vis::Figure;
 import util::Math;
-import Relation;
 import lang::\while::ifds::SuperCFG;
 import lang::\while::interprocedural::InterproceduralSyntax;
 import IO;
@@ -17,34 +16,42 @@ public void renderSuperCFG(WhileProgram p){
 	render(graph(nodes, edges, hint("layered"), gap(100)));
 }
 
-public str getNodeId(int from, CallId cId){
-	switch(cId) {
-    	case EmptyCallId(): {
-    		str nodeId = toString(from);
-    		return nodeId;
-    	}
-    	case CallId(id): {
-    		str nodeId = "call:"+toString(id)+" "+toString(from);
-    		return nodeId;
-    	}
-  	}
-  	throw "[CALL FAILURE] could not guess node id";
-}
 
-public Figures nodesFromScfg(SuperCFG g){
-	nodes = [];
-	set[str] nodeIds = {};
-	for (<from, to, cId>  <- g ){
-		str nodeId = getNodeId(from, cId);
-		nodeIds = nodeIds + {nodeId};
-		nodeIds = nodeIds + {toString(to)};
+public Figures nodesFromScfg(SuperCFG g) {
+	set[str] nodeNames = {};
+	for (edge  <- g ) {
+		switch(edge) {
+			case BasicEdge(Label from, Label to): {
+				nodeNames = nodeNames + toString(from) + toString(to);
+			}
+			case ReturnEdge(Label from, Label to): {
+				nodeNames = nodeNames + toString(from) + toString(to);
+			}
+			case CallEdge(Label from, Label to, int cid): {
+				nodeNames = nodeNames + toString(from) + toString(to);
+			}
+		}
 	}
-	nodes = [ box(text(nodeId), id(nodeId), size(50), fillColor("lightgreen")) | nodeId <- nodeIds];			  
+	nodes = [box(text(n), id(n), size(50), fillColor("lightgreen")) | n <- nodeNames];	  
 	return nodes;
 }
 
 public list[Edge] edgesFromScfg(SuperCFG g){
-	edges = [edge(getNodeId(from, cId), toString(to), toArrow(box(size(10)))) | <from, to, cId> <- g]; 
+	edges = [];
+	for (e  <- g ) {
+		switch(e) {
+			case BasicEdge(Label from, Label to): {
+				edges = edges + edge(toString(from), toString(to), toArrow(box(size(10))));
+			}
+			case ReturnEdge(Label from, Label to): {
+				edges = edges + edge(toString(from), toString(to), toArrow(box(size(10))));
+			}
+			case CallEdge(Label from, Label to, int cid): {
+				edges = edges + edge(toString(from), toString(to), toArrow(box(size(10))));
+			}
+		}
+	}
+	//edges = [edge(getNodeId(from, cId), toString(to), toArrow(box(size(10)))) | <from, to, cId> <- g]; 
 	return edges;
 }
 
