@@ -3,6 +3,7 @@ module util::RunICFG
 import lang::\while::interprocedural::InterproceduralParser;
 import lang::\while::interprocedural::InterproceduralSyntax;
 import lang::\while::interprocedural::InterproceduralCFG;
+import lang::\while::interprocedural::CallProcedureTransformation;
 import lang::\while::CFGUtil;
 
 import programs::Fibonacci;
