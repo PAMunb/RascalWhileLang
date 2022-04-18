@@ -1,14 +1,6 @@
 module util::RunSuperCFG
 
 
-
-
-import vis::Render;
-import vis::Figure; 
-import IO;
-import Relation;
-import util::Math;
-import analysis::graphs::LabeledGraph;
 import lang::\while::ifds::SuperCFGProgram;
 import lang::\while::ifds::SuperCFG;
 import lang::\while::SuperCFGUtil;
