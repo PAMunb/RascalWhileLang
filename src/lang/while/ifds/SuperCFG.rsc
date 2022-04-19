@@ -8,7 +8,7 @@ import IO;
 
 data Edge = BasicEdge(Label from, Label to)
 			| CallEdge(Label from, Label to, int cid)
-			| ReturnEdge(Label from, Label to);
+			| ReturnEdge(Label from, Label to, int cid);
 			
 alias SuperCFG = set[Edge];
 
@@ -27,7 +27,7 @@ public SuperCFG sflow(While(Condition(_, l), s1)) = sflow(s1) + BasicEdge(l, ini
 
 public SuperCFG sflow(c:Call(_, _, lc, lr)) {
 	int callId = allocateCall();
-	return {CallEdge(lc, c@proc.ln, callId), CallEdge(c@proc.lx, lr, callId), ReturnEdge(lc,lr)};
+	return {CallEdge(lc, c@proc.ln, callId), ReturnEdge(c@proc.lx, lr, callId), BasicEdge(lc,lr)};
 }
 public SuperCFG sflow(Procedure(_, _, ln, s, lx)) {
 	return BasicEdge(ln, init(s)) + sflow(s) + { BasicEdge(l, lx) | Label l <- final(s)};
