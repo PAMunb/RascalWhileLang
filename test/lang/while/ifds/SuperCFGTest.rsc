@@ -5,7 +5,13 @@ import lang::\while::ifds::SuperCFGProgram;
 import lang::\while::ifds::SuperCFG;
 import lang::\while::interprocedural::InterproceduralSyntax;
 
-public test bool testSuperCFG(){
+
+tuple[Label, EdgeType, Label] BasicEdge(Label from, Label to) = <from, BasicEdge(), to>; 
+tuple[Label, EdgeType, Label] CallEdge(Label from, Label to, int cId) = <from, CallEdge(cId), to>; 
+tuple[Label, EdgeType, Label] ReturnEdge(Label from, Label to, int cId) = <from, ReturnEdge(cId), to>; 
+
+
+public bool testSuperCFG(){
 	WhileProgram p = superCFGProgram();
 	SuperCFG scfg = sflow(p);
 	SuperCFG expected = {

@@ -13,13 +13,13 @@ public LGraph[str, str] toLGraph(SuperCFG g) {
 	LGraph[str, str] lgraph = {};
 	for (edge  <- g ) {
 		switch(edge) {
-			case BasicEdge(Label from, Label to): {
+			case <Label from, BasicEdge(), Label to>: {
 				lgraph = lgraph + <toString(from), "", toString(to)>;
 			}
-			case ReturnEdge(Label from, Label to): {
-				lgraph = lgraph + <toString(from), "", toString(to)>;
+			case <Label from, ReturnEdge(cId), Label to>: {
+				lgraph = lgraph + <toString(from), toString(cId), toString(to)>;
 			}
-			case CallEdge(Label from, Label to, int cId): {
+			case <Label from, CallEdge(cId), Label to>: {
 				lgraph = lgraph + <toString(from), toString(cId), toString(to)>;
 			}
 		}
