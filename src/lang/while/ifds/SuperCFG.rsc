@@ -4,9 +4,8 @@ extend lang::\while::interprocedural::InterproceduralCFG;
 
 import analysis::graphs::LabeledGraph;
 import lang::\while::interprocedural::InterproceduralSyntax;
-
-
-
+ 
+ 
 data EdgeType = BasicEdge() 
               | CallEdge(int id) 
               | ReturnEdge(int id);
