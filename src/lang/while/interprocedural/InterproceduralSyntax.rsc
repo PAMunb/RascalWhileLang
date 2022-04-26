@@ -16,5 +16,9 @@ data Block = entryProc(Label l) | exitProc(Label l);
           
 data ProcedureLabels = ProcedureLabels(Label ln, Label lx);
 
+Label label(stmt(Call(_, _, lc, _))) = lc;
+Label label(entryProc(ln)) = ln; 
+Label label(exitProc(lx)) = lx; 
+
 anno ProcedureLabels Stmt @ proc;          
                       
